@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { BlogDto } from './dto/blog.dto';
+import { BlogDto, UpdateBlogDto } from './dto/blog.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/user/schema/user.schema';
 import { Model, Types } from 'mongoose';
@@ -11,7 +11,7 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 export class BlogService {
 
 constructor(@InjectModel(Blog.name) private readonly blogModel:Model<Blog>,
-private readonly clodinary:CloudinaryService){}
+private readonly cloudinary:CloudinaryService){}
    
 
     /**
@@ -54,7 +54,7 @@ private readonly clodinary:CloudinaryService){}
     async createBlog(image:Express.Multer.File,dto:BlogDto)
     {
         
-        const imageUrl=await this.clodinary.uploadImage(image,'test');
+        const imageUrl=await this.cloudinary.uploadImage(image,'test');
         
         if(!imageUrl)
         {
@@ -77,10 +77,49 @@ private readonly clodinary:CloudinaryService){}
     }
 
 
+    /**
+     * 
+     * @param image 
+     * @param dto 
+     * @param id 
+     * This is a test function correct this function after finding the issue
+     */
+    async updateblog(image:Express.Multer.File,dto:UpdateBlogDto,id)
+    {
+        let imageUrl;
+        if(image)
+        {
+            imageUrl=await this.cloudinary.uploadImage(image,'updateTest');
+        }
 
+        const updateBlog=await this.blogModel.findByIdAndUpdate(id,dto);
 
+        
+    }
 
+    
+    /**
+     * @param id 
+     * To get a blog data ..
+     * @returns blog data
+     */    
 
+    async blog(id:string)
+    {
+        if(!id)
+        {
+            throw new BadRequestException('Id is rerquired...');
+        }
+
+        const blog=await this.blogModel.findById(id);
+
+        if(!blog)
+        {
+            throw new BadRequestException('Blog with this id does not exist ');
+        }
+
+        return blog;
+    }
 
     /**
      * @param id 

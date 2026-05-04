@@ -24,3 +24,6 @@ export class BlogDto
     
 }
 
+
+export class UpdateBlogDto extends BlogDto{};
+
