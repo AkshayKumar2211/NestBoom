@@ -43,7 +43,7 @@ export class TodoListService {
     }
 
 
-    async getById(id:String):Promise<any>
+    async getTaskById(id:String):Promise<any>
     {
         if(!id){
             throw new BadRequestException("Id is required please provide a id");

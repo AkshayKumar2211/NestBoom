@@ -7,11 +7,27 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { BlogModule } from './blog/blog.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MessangerModule } from './messanger/messanger.module';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost:27017/nestagain'), 
-    ConfigModule.forRoot({isGlobal:true}),TodoListModule, AuthModule, UserModule, BlogModule, CloudinaryModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri:
+          configService.get<string>('MONGODB_URL') ??
+          'mongodb://mongodb:27017/nestjs',
+      }),
+    }),
+    TodoListModule,
+    AuthModule,
+    UserModule,
+    BlogModule,
+    CloudinaryModule,
+    MessangerModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

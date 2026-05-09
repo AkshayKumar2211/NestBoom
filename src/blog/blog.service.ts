@@ -90,9 +90,18 @@ private readonly cloudinary:CloudinaryService){}
         if(image)
         {
             imageUrl=await this.cloudinary.uploadImage(image,'updateTest');
+
+        }
+        else
+        {
+            const blog=await this.blogModel.findById(id);
+            imageUrl=blog?.imageUrl;
         }
 
-        const updateBlog=await this.blogModel.findByIdAndUpdate(id,dto);
+        const {title,content,category,tags}=dto;
+        const updateBlog=await this.blogModel.findByIdAndUpdate(id,{title,content,category,tags,imageUrl});
+
+        return updateBlog;
 
         
     }
